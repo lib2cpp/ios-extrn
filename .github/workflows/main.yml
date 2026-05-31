@@ -1,0 +1,26 @@
+
+```
+```yaml
+name: Build IPA
+on: [push]
+jobs:
+  build:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Build
+        run: |
+          xcodebuild -project ChessBot.xcodeproj \
+            -scheme ChessBot \
+            -configuration Release \
+            -archivePath build/ChessBot.xcarchive \
+            archive CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO
+          xcodebuild -exportArchive \
+            -archivePath build/ChessBot.xcarchive \
+            -exportPath build/ipa \
+            -exportOptionsPlist ExportOptions.plist
+      - uses: actions/upload-artifact@v3
+        with:
+          name: ChessBot-IPA
+          path: build/ipa/*.ipa
+---
